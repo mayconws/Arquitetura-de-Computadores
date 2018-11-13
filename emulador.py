@@ -1,3 +1,4 @@
+﻿
 memory = [ ]
 memory_size = 64
 regs = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -59,41 +60,46 @@ def execute () :
 			print("add r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
 			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
 
-		# programar aqui outras instruções tipo R
-		#sub
+		# sub
 		elif decoded_inst['opcode'] == 1:
-			print("sub r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+			print("add r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
+			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] - regs[ decoded_inst['r_op2'] ]
 
 		#mul
-		elif decoded_inst['opcode'] == 10:
+		elif decoded_inst['opcode'] == 2:
 			print("mul r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] * regs[ decoded_inst['r_op2'] ]
 
-		#div
-		elif decoded_inst['opcode'] == 11:
-			print("div r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+        # div
+		elif decoded_inst['opcode'] == 3:
+			print("mul r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
+			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] / regs[ decoded_inst['r_op2'] ]
 
 		#cmp_eq
-		elif decoded_inst['opcode'] == 100:
-			print("cmp_eq r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+		elif decoded_inst['opcode'] == 4:
+			print("cmp_neq r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
+			if regs[ decoded_inst['r_op1']] == regs[ decoded_inst['r_op2']]:
+				regs[ decoded_inst['r_dest']] = 1
+			else:
+				regs[ decoded_inst['r_dest'] ]= 0
 
 		#cmp_neq
-		elif decoded_inst['opcode'] == 101:
+		elif decoded_inst['opcode'] == 5:
 			print("cmp_neq r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+			if regs[ decoded_inst['r_op1']] != regs[ decoded_inst['r_op2']]:
+				regs[ decoded_inst['r_dest']] = 1
+			else:
+				regs[ decoded_inst['r_dest'] ]= 0
 
 		#load
-		elif decoded_inst['opcode'] == 1111:
-			print("load r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+		elif decoded_inst['opcode'] == 15:
+			print(regs[ decoded_inst['r_op1']])
+			regs[ decoded_inst['r_dest'] ] = memory[regs[ decoded_inst['r_op1']]]
 
-		#store
-		elif decoded_inst['opcode'] == 10000:
-			print("store r"+str(decoded_inst['r_dest'])+", r"+str(decoded_inst['r_op1'])+", r"+str(decoded_inst['r_op2']))
-			regs[ decoded_inst['r_dest'] ] = regs[ decoded_inst['r_op1'] ] + regs[ decoded_inst['r_op2'] ]
+		# store
+		elif decoded_inst['opcode'] == 16:
+			print(regs[ decoded_inst['r_op1']])
+			memory[regs[ decoded_inst['r_op1']]] = regs[ decoded_inst['r_op2']]
 
 		# halt
 		elif decoded_inst['opcode'] == 63:
@@ -108,16 +114,16 @@ def execute () :
 		if decoded_inst['opcode'] == 0:
 			print("jump "+str(decoded_inst['i_imed']))
 			reg_pc = decoded_inst['i_imed']
-
-		# programar aqui outras instruções tipo I
-			#jump_cond
+		#jump_cond
 		elif decoded_inst['opcode'] == 1:
-				print("jump_cond "+str(decoded_inst['i_imed']))
+			print("jump_cond "+str(decoded_inst['i_imed']))
+			if regs[decoded_inst['i_reg']] == 1:
 				reg_pc = decoded_inst['i_imed']
 		#mov
-		elif decoded_inst['opcode'] == 11:
-			print("jump "+str(decoded_inst['i_imed']))
-			reg_pc = decoded_inst['i_imed']
+		elif decoded_inst['opcode'] == 3:
+			print("mov "+str(decoded_inst['i_imed']))
+			regs[decoded_inst['i_reg']] = decoded_inst['i_imed']
+
 
 		else:
 			print("opcode " + str(decoded_inst['opcode']) + " invalido tipo I")
